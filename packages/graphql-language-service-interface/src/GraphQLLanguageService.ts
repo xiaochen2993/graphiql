@@ -25,6 +25,7 @@ import {
   Position,
   Outline,
   OutlineTree,
+  Token,
   ContextToken,
 } from 'graphql-language-service-types';
 
