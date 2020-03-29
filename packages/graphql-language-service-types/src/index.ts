@@ -10,7 +10,7 @@ import {
   Diagnostic as DiagnosticType,
   CompletionItem as CompletionItemType,
 } from 'vscode-languageserver-protocol';
-import { KindEnum } from 'graphql';
+import { Kind } from 'graphql';
 
 import {
   DocumentNode,
@@ -31,8 +31,6 @@ import { GraphQLDirective } from 'graphql/type/directives';
 export type Maybe<T> = T | null | undefined;
 
 import { GraphQLConfig, GraphQLProjectConfig } from 'graphql-config';
-export { GraphQLConfig, GraphQLProjectConfig };
-
 import { _Kind } from 'graphql/language/kinds';
 
 export type TokenPattern = string | ((char: string) => boolean) | RegExp;
