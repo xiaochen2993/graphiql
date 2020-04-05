@@ -69,9 +69,6 @@ const resultConfig = {
     // in order to prevent async modules for CDN builds
     // until we can guarantee it will work with the CDN properly
     // and so that graphiql.min.js can retain parity
-    new webpack.optimize.LimitChunkCountPlugin({
-      maxChunks: 1,
-    }),
     new HtmlWebpackPlugin({
       template: relPath('src/index.html.ejs'),
       filename: 'index.html',

@@ -1,5 +1,7 @@
 // / <reference path="./monaco.d.ts"/>
 
+import { graphqlLanguage as monacoGraphQL } from './monaco';
+
 import * as monaco from 'monaco-editor';
 
 import * as mode from './graphqlMode';
@@ -14,32 +16,27 @@ export const LANGUAGE_ID = 'graphqlDev';
 // --- JSON configuration and defaults ---------
 
 export class LanguageServiceDefaultsImpl
-  implements
-    // @ts-ignore
-    monaco.languages.graphql.LanguageServiceDefaults {
-  private _onDidChange = new Emitter<
-    // @ts-ignore
-    monaco.languages.graphql.LanguageServiceDefaults
-  >();
+  implements monacoGraphQL.LanguageServiceDefaults {
+  private _onDidChange = new Emitter<monacoGraphQL.LanguageServiceDefaults>();
   // @ts-ignore
-  private _diagnosticsOptions: monaco.languages.graphql.DiagnosticsOptions;
+  private _diagnosticsOptions: monacoGraphQL.DiagnosticsOptions;
   // @ts-ignore
-  private _modeConfiguration: monaco.languages.graphql.ModeConfiguration;
+  private _modeConfiguration: monacoGraphQL.ModeConfiguration;
   private _languageId: string;
 
   constructor(
     languageId: string,
     // @ts-ignore
-    diagnosticsOptions: monaco.languages.graphql.DiagnosticsOptions,
+    diagnosticsOptions: monacoGraphQL.DiagnosticsOptions,
     // @ts-ignore
-    modeConfiguration: monaco.languages.graphql.ModeConfiguration,
+    modeConfiguration: monacoGraphQL.ModeConfiguration,
   ) {
     this._languageId = languageId;
     this.setDiagnosticsOptions(diagnosticsOptions);
     this.setModeConfiguration(modeConfiguration);
   }
   // @ts-ignore
-  get onDidChange(): IEvent<monaco.languages.graphql.LanguageServiceDefaults> {
+  get onDidChange(): IEvent<monacoGraphQL.LanguageServiceDefaults> {
     return this._onDidChange.event;
   }
 
@@ -47,17 +44,17 @@ export class LanguageServiceDefaultsImpl
     return this._languageId;
   }
   // @ts-ignore
-  get modeConfiguration(): monaco.languages.graphql.ModeConfiguration {
+  get modeConfiguration(): monacoGraphQL.ModeConfiguration {
     return this._modeConfiguration;
   }
   // @ts-ignore
-  get diagnosticsOptions(): monaco.languages.graphql.DiagnosticsOptions {
+  get diagnosticsOptions(): monacoGraphQL.DiagnosticsOptions {
     return this._diagnosticsOptions;
   }
 
   setDiagnosticsOptions(
     // @ts-ignore
-    options: monaco.languages.graphql.DiagnosticsOptions,
+    options: monacoGraphQL.DiagnosticsOptions,
   ): void {
     this._diagnosticsOptions = options || Object.create(null);
     this._onDidChange.fire(this);
@@ -65,7 +62,7 @@ export class LanguageServiceDefaultsImpl
 
   setModeConfiguration(
     // @ts-ignore
-    modeConfiguration: monaco.languages.graphql.ModeConfiguration,
+    modeConfiguration: monacoGraphQL.ModeConfiguration,
   ): void {
     this._modeConfiguration = modeConfiguration || Object.create(null);
     this._onDidChange.fire(this);
@@ -73,7 +70,7 @@ export class LanguageServiceDefaultsImpl
 }
 
 // @ts-ignore
-const diagnosticDefault: Required<monaco.languages.graphql.DiagnosticsOptions> = {
+const diagnosticDefault: Required<monacoGraphQL.DiagnosticsOptions> = {
   validate: true,
   allowComments: true,
   schemas: [],
@@ -81,7 +78,7 @@ const diagnosticDefault: Required<monaco.languages.graphql.DiagnosticsOptions> =
 };
 
 // @ts-ignore
-const modeConfigurationDefault: Required<monaco.languages.graphql.ModeConfiguration> = {
+const modeConfigurationDefault: Required<monacoGraphQL.ModeConfiguration> = {
   documentFormattingEdits: false,
   documentRangeFormattingEdits: false,
   completionItems: true,

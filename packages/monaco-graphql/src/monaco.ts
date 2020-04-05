@@ -1,6 +1,6 @@
 // / <reference path="../../../node_modules/monaco-editor/monaco.d.ts"/>
 
-declare module monaco.languages.graphql {
+export module graphqlLanguage {
   export interface IDisposable {
     dispose(): void;
   }
@@ -100,7 +100,7 @@ declare module monaco.languages.graphql {
     setModeConfiguration(modeConfiguration: ModeConfiguration): void;
   }
 
-  export const graphqlDefaults: LanguageServiceDefaults;
+  // export const graphqlDefaults: LanguageServiceDefaults;
 }
 
 // declare module ''monaco-editor-core/esm/vs/editor/editor.worker';
