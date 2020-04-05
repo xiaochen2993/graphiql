@@ -79,10 +79,10 @@ const diagnosticDefault: Required<monacoGraphQL.DiagnosticsOptions> = {
 
 // @ts-ignore
 const modeConfigurationDefault: Required<monacoGraphQL.ModeConfiguration> = {
-  documentFormattingEdits: false,
+  documentFormattingEdits: true,
   documentRangeFormattingEdits: false,
   completionItems: true,
-  hovers: false,
+  hovers: true,
   documentSymbols: false,
   tokens: false,
   colors: false,

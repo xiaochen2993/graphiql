@@ -11,6 +11,7 @@ import Position = monaco.Position;
 import Thenable = monaco.Thenable;
 import CancellationToken = monaco.CancellationToken;
 import IDisposable = monaco.IDisposable;
+// import { LanguageServiceDefaultsImpl } from './monaco.contribution';
 
 export interface WorkerAccessor {
   (...more: Uri[]): Thenable<GraphQLWorker>;
@@ -212,6 +213,36 @@ export class CompletionAdapter
       console.error(`Error fetching completion items\n\n${err}`);
       return { suggestions: [] };
     }
+  }
+}
+
+export class DocumentFormattingAdapter
+  implements monaco.languages.DocumentFormattingEditProvider {
+  constructor(
+    // private _defaults: LanguageServiceDefaultsImpl,
+    private _worker: WorkerAccessor,
+  ) {
+    // this._defaults = _defaults;
+    this._worker = _worker;
+  }
+  async provideDocumentFormattingEdits(
+    document: monaco.editor.ITextModel,
+    _options: monaco.languages.FormattingOptions,
+    _token: monaco.CancellationToken,
+  ) {
+    const worker = await this._worker(document.uri);
+    const text = document.getValue();
+
+    const formatted = await worker.doFormat(
+      text,
+      // this._defaults.modeConfiguration.formattingOptions,
+    );
+    return [
+      {
+        range: document.getFullModelRange(),
+        text: formatted,
+      },
+    ];
   }
 }
 

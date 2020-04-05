@@ -86,18 +86,14 @@ async function executeCurrentOp() {
   }
 }
 
-const opAction = {
-  id: 'run',
+const opAction: monaco.editor.IActionDescriptor = {
+  id: 'graphql-run',
   label: 'Run Operation',
+  contextMenuOrder: 0,
+  contextMenuGroupId: 'graphql',
   keybindings: [
     // eslint-disable-next-line no-bitwise
     monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
-    // eslint-disable-next-line no-bitwise
-    monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S,
-    // eslint-disable-next-line no-bitwise
-    monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_R,
-    // eslint-disable-next-line no-bitwise
-    monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_Q,
   ],
   run: executeCurrentOp,
 };
@@ -125,6 +121,28 @@ monaco.languages.registerDocumentFormattingEditProvider('graphqlDev', {
       {
         range: document.getFullModelRange(),
         text: formatted,
+      },
+    ];
+  },
+});
+
+monaco.languages.registerDocumentRangeFormattingEditProvider('graphqlDev', {
+  provideDocumentRangeFormattingEdits: (
+    model: monaco.editor.ITextModel,
+    range: monaco.Range,
+  ): monaco.languages.ProviderResult<monaco.languages.TextEdit[]> => {
+    const rangedValue = model.getValueInRange(range);
+    console.log('value\n', rangedValue);
+    const formatted = prettierStandalone.format(rangedValue, {
+      parser: 'graphql',
+      plugins: [prettierGraphqlParser],
+    });
+    console.log('formatted\n', formatted);
+
+    return [
+      {
+        text: formatted,
+        range,
       },
     ];
   },

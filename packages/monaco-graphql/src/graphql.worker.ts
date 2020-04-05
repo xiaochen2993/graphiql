@@ -104,7 +104,6 @@ export class GraphQLWorker {
   constructor(ctx: monaco.worker.IWorkerContext, createData: ICreateData) {
     this._ctx = ctx;
     // this.schema = null;
-    console.log({ ctx, createData });
   }
   async doValidation(uri: string): Promise<monaco.editor.IMarkerData[]> {
     const document = this._getTextDocument(uri);
@@ -165,11 +164,19 @@ export class GraphQLWorker {
       ),
     };
   }
+  async doFormat(text: string): Promise<string> {
+    const prettierStandalone = await import('prettier/standalone');
+    const prettierGraphqlParser = await import('prettier/parser-graphql');
+
+    return prettierStandalone.format(text, {
+      parser: 'graphql',
+      plugins: [prettierGraphqlParser],
+    });
+  }
 
   private _getTextDocument(_uri: string): string {
     const models = this._ctx.getMirrorModels();
     if (models.length > 0) {
-      console.log(models[0].uri);
       return models[0].getValue();
     }
     return '';
@@ -181,12 +188,10 @@ self.onmessage = () => {
     // ignore the first message
     worker.initialize(
       (ctx: monaco.worker.IWorkerContext, createData: ICreateData) => {
-        console.log('worker initialized');
         return new GraphQLWorker(ctx, createData);
       },
     );
   } catch (err) {
-    console.error(err);
     throw err;
   }
 };
