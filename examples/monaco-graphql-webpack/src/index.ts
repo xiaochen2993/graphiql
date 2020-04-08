@@ -1,8 +1,6 @@
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import 'regenerator-runtime/runtime';
 import 'monaco-graphql/esm/monaco.contribution';
-import * as prettierStandalone from 'prettier/standalone';
-import * as prettierGraphqlParser from 'prettier/parser-graphql';
 // NOTE: using loader syntax becuase Yaml worker imports editor.worker directly and that
 // import shouldn't go through loader syntax.
 // @ts-ignore
@@ -101,49 +99,3 @@ const opAction: monaco.editor.IActionDescriptor = {
 operationEditor.addAction(opAction);
 variablesEditor.addAction(opAction);
 resultsEditor.addAction(opAction);
-
-/**
- * Basic custom formatter/language functionality example
- */
-
-monaco.languages.registerDocumentFormattingEditProvider('graphqlDev', {
-  provideDocumentFormattingEdits: (
-    document: monaco.editor.ITextModel,
-    _options: monaco.languages.FormattingOptions,
-    _token: monaco.CancellationToken,
-  ) => {
-    const text = document.getValue();
-    const formatted = prettierStandalone.format(text, {
-      parser: 'graphql',
-      plugins: [prettierGraphqlParser],
-    });
-    return [
-      {
-        range: document.getFullModelRange(),
-        text: formatted,
-      },
-    ];
-  },
-});
-
-monaco.languages.registerDocumentRangeFormattingEditProvider('graphqlDev', {
-  provideDocumentRangeFormattingEdits: (
-    model: monaco.editor.ITextModel,
-    range: monaco.Range,
-  ): monaco.languages.ProviderResult<monaco.languages.TextEdit[]> => {
-    const rangedValue = model.getValueInRange(range);
-    console.log('value\n', rangedValue);
-    const formatted = prettierStandalone.format(rangedValue, {
-      parser: 'graphql',
-      plugins: [prettierGraphqlParser],
-    });
-    console.log('formatted\n', formatted);
-
-    return [
-      {
-        text: formatted,
-        range,
-      },
-    ];
-  },
-});
