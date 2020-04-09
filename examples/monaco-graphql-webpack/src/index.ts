@@ -1,6 +1,8 @@
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
+
 import 'regenerator-runtime/runtime';
 import 'monaco-graphql/esm/monaco.contribution';
+
 // NOTE: using loader syntax becuase Yaml worker imports editor.worker directly and that
 // import shouldn't go through loader syntax.
 // @ts-ignore
@@ -11,6 +13,7 @@ import JSONWorker from 'worker-loader!monaco-editor/esm/vs/language/json/json.wo
 import GraphQLWorker from 'worker-loader!monaco-graphql/esm/graphql.worker';
 
 const SCHEMA_URL = 'https://swapi-graphql.netlify.com/.netlify/functions/index';
+
 // @ts-ignore
 window.MonacoEnvironment = {
   getWorker(_workerId: string, label: string) {
@@ -24,11 +27,16 @@ window.MonacoEnvironment = {
   },
 };
 
+const variablesModel = monaco.editor.createModel(
+  `{}`,
+  'json',
+  monaco.Uri.file('/1/variables.json'),
+);
+
 const resultsEditor = monaco.editor.create(
   document.getElementById('results') as HTMLElement,
   {
-    value: `{ }`,
-    language: 'json',
+    model: variablesModel,
   },
 );
 const variablesEditor = monaco.editor.create(
@@ -49,7 +57,7 @@ query Example {
 }
 `,
   'graphqlDev',
-  monaco.Uri.file('/1.graphql'),
+  monaco.Uri.file('/1/operation.graphql'),
 );
 
 const operationEditor = monaco.editor.create(

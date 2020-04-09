@@ -15,7 +15,7 @@ const resultConfig = {
   entry: {
     app: './index.ts',
     'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
-    'json.worker': 'monaco-editor/esm/vs/language/json/json.worker.js',
+    // 'json.worker': 'monaco-editor/esm/vs/language/json/json.worker.js',
     'graphql.worker': 'monaco-graphql/esm/graphql.worker.js',
   },
   context: rootPath('src'),

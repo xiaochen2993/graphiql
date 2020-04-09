@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor';
-import { LanguageServiceDefaultsImpl } from './monaco.contribution';
+import { LanguageServiceDefaultsImpl } from './defaults';
 import { GraphQLWorker } from './graphql.worker';
 
 import IDisposable = monaco.IDisposable;

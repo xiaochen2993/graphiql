@@ -1,6 +1,4 @@
-// / <reference path="../../../node_modules/monaco-editor/monaco.d.ts"/>
-
-export module graphqlLanguage {
+declare module monaco.languages.graphql {
   export interface IDisposable {
     dispose(): void;
   }
@@ -20,7 +18,7 @@ export module graphqlLanguage {
     /**
      * A list of known schemas and/or associations of schemas to file names.
      */
-    readonly schemas?: {
+    readonly schemas?: Array<{
       /**
        * The URI of the schema, which is also the identifier of the schema.
        */
@@ -33,7 +31,7 @@ export module graphqlLanguage {
        * The schema for the given URI.
        */
       readonly schema?: any;
-    }[];
+    }>;
     /**
      *  If set, the schema service would load schema content on-demand with 'fetch' if available
      */

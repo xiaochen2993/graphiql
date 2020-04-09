@@ -2,8 +2,7 @@ import * as monaco from 'monaco-editor';
 import { buildClientSchema } from 'graphql';
 // @ts-ignore
 import * as worker from 'monaco-editor/esm/vs/editor/editor.worker';
-import { Range } from 'graphql-language-service-types';
-import { CompletionItem as lsCompletionItem } from 'vscode-languageserver-types';
+import { Range as GraphQLRange } from 'graphql-language-service-types';
 
 export interface ICreateData {
   languageId: string;
@@ -13,63 +12,30 @@ export interface ICreateData {
 // @ts-ignore
 import {
   getDiagnostics,
-  Diagnostic,
+  // Diagnostic,
   getRange,
   getAutocompleteSuggestions,
   getHoverInformation,
   getTokenRange,
+  CompletionItem as GraphQLCompletionItem,
 } from 'graphql-languageservice';
+
 import introspectionQuery from './schema';
 
-// console.log(MonacoRange)
+import { toGraphQLPosition, toMonacoRange, toMarkerData } from './utils';
 
 // @ts-ignore
 const schema = buildClientSchema(introspectionQuery, { assumeValid: false });
 
-export class Position {
-  line: number;
-  character: number;
-  constructor(line: number, character: number) {
-    this.line = line;
-    this.character = character;
-  }
-
-  setLine(line: number) {
-    this.line = line;
-  }
-
-  setCharacter(character: number) {
-    this.character = character;
-  }
-
-  lessThanOrEqualTo = (position: Position): boolean =>
-    this.line < position.line ||
-    (this.line === position.line && this.character <= position.character);
-}
-
-export type CompletionItem = monaco.languages.CompletionItem & {
+export type MonacoCompletionItem = monaco.languages.CompletionItem & {
   isDeprecated?: boolean;
   deprecationReason?: string | null;
 };
 
-export function toRange(range: Range): monaco.IRange {
-  return {
-    startLineNumber: range.start.line + 1,
-    startColumn: range.start.character + 1,
-    endLineNumber: range.end.line + 1,
-    endColumn: range.end.character + 1,
-  };
-}
-
-export function toGraphQLPosition(position: monaco.Position): Position {
-  const pos = new Position(position.lineNumber - 1, position.column - 1);
-  pos.setCharacter(position.column - 1);
-  pos.line = position.lineNumber - 1;
-  return pos;
-}
-
-export function toCompletion(entry: CompletionItem, range: Range) {
-  // @ts-ignore
+export function toCompletion(
+  entry: GraphQLCompletionItem,
+  range: GraphQLRange,
+): GraphQLCompletionItem & { range: monaco.IRange } {
   return {
     label: entry.label,
     insertText: entry.insertText || (entry.label as string),
@@ -77,22 +43,8 @@ export function toCompletion(entry: CompletionItem, range: Range) {
     filterText: entry.filterText,
     documentation: entry.documentation,
     detail: entry.detail,
-    range: toRange(range),
+    range: toMonacoRange(range),
     kind: entry.kind,
-  };
-}
-
-export function toMarkerData(
-  diagnostic: Diagnostic,
-): monaco.editor.IMarkerData {
-  return {
-    startLineNumber: diagnostic.range.start.line + 1,
-    endLineNumber: diagnostic.range.end.line + 1,
-    startColumn: diagnostic.range.start.character + 1,
-    endColumn: diagnostic.range.end.character + 1,
-    message: diagnostic.message,
-    severity: 5 || (diagnostic.severity as monaco.MarkerSeverity),
-    code: (diagnostic.code as string) || undefined,
   };
 }
 
@@ -114,20 +66,19 @@ export class GraphQLWorker {
   async doComplete(
     uri: string,
     position: monaco.Position,
-  ): Promise<(lsCompletionItem & { range: monaco.IRange })[]> {
+  ): Promise<(GraphQLCompletionItem & { range: monaco.IRange })[]> {
     const document = this._getTextDocument(uri);
     const graphQLPosition = toGraphQLPosition(position);
     const suggestions = await getAutocompleteSuggestions(
       schema,
       document,
-      // @ts-ignore
       graphQLPosition,
     );
+    // return suggestions
 
-    return suggestions.map((e: CompletionItem) =>
+    return suggestions.map(suggestion =>
       toCompletion(
-        e,
-        // @ts-ignore
+        suggestion,
         getRange(
           {
             column: graphQLPosition.character + 1,
@@ -143,17 +94,11 @@ export class GraphQLWorker {
     const document = this._getTextDocument(uri);
     const graphQLPosition = toGraphQLPosition(position);
 
-    const hover = await getHoverInformation(
-      schema,
-      document,
-      // @ts-ignore
-      graphQLPosition,
-    );
+    const hover = await getHoverInformation(schema, document, graphQLPosition);
 
     return {
       content: hover,
-      // @ts-ignore
-      range: toRange(
+      range: toMonacoRange(
         getTokenRange(
           {
             column: graphQLPosition.character + 1,
@@ -176,6 +121,7 @@ export class GraphQLWorker {
 
   private _getTextDocument(_uri: string): string {
     const models = this._ctx.getMirrorModels();
+    console.log('allModels', models);
     if (models.length > 0) {
       return models[0].getValue();
     }

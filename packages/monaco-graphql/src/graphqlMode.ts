@@ -4,10 +4,8 @@ import IRichLanguageConfiguration = monaco.languages.LanguageConfiguration;
 
 import { WorkerManager } from './workerManager';
 import { GraphQLWorker } from './graphql.worker';
-import {
-  LanguageServiceDefaultsImpl,
-  monarchLanguage,
-} from './monaco.contribution';
+import { monarchLanguage } from './monaco.contribution';
+import { LanguageServiceDefaultsImpl } from './defaults';
 import * as languageFeatures from './languageFeatures';
 import { Uri, IDisposable } from 'monaco-editor';
 
