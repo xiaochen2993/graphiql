@@ -36,7 +36,7 @@ import {
   State,
   Token,
   Rule,
-  RuleKind
+  RuleKind,
 } from 'graphql-language-service-types';
 
 import { LexRules, ParseRules, isIgnored } from './Rules';
