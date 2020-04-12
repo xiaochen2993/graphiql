@@ -40,7 +40,6 @@ const resultConfig = {
   devtool: isDev ? 'cheap-module-eval-source-map' : 'source-map',
   node: {
     fs: 'empty',
-    module: 'empty',
   },
   externals: {
     react: 'React',
