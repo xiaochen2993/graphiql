@@ -13,7 +13,6 @@ import HistoryQuery, {
   HandleToggleFavoriteFn,
   HandleSelectQueryFn,
 } from './HistoryQuery';
-
 import StorageAPI from '../utility/StorageAPI';
 
 const MAX_QUERY_SIZE = 100000;
